@@ -14,7 +14,7 @@ class Deskpet(QWidget):
 
     def __init__(self):
         super().__init__()
-
+        self.isDebug = True
         self.resource_path = './resource/img/'
 
         self.movies = {
@@ -42,6 +42,9 @@ class Deskpet(QWidget):
         debug_timer.start(1000)
         
     def load_gif_size(self):
+        '''
+        加载图像尺寸防止图像消失（真的有这个bug）
+        '''
         for state in PetState:
             movie = self.movies[state]
             movie.jumpToFrame(0)
@@ -49,6 +52,9 @@ class Deskpet(QWidget):
             self.movie_size[state] = size
 
     def init_window(self):
+        '''
+        初始化桌宠
+        '''
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint |
@@ -68,6 +74,9 @@ class Deskpet(QWidget):
 
 
     def init_tary_icon(self):
+        '''
+        初始化图标(windows隐藏的图标)
+        '''
         icon_path = os.path.join(self.resource_path, 'standby.gif')
         self.tray_icon.setIcon(QIcon(icon_path))
 
@@ -79,6 +88,7 @@ class Deskpet(QWidget):
         quit_action = QAction("退出", self)
 
         quit_action.triggered.connect(QApplication.instance().quit)
+        show_action.triggered.connect(self.toggle_visibility)
         tray_menu.addAction(show_action)
         tray_menu.addAction(quit_action)
 
@@ -86,6 +96,10 @@ class Deskpet(QWidget):
         self.tray_icon.show()
     
     def init_click_menu(self):
+        '''
+        正在施工中
+        '''
+        pass
         menu = QMenu(self)
         show_action = QAction("显示/隐藏", self)
         quit_action = QAction("退出", self)
@@ -97,8 +111,10 @@ class Deskpet(QWidget):
     def toggle_visibility(self):
         if self.isVisible():
             self.hide()
+            self.pet_label.hide()
         else :
             self.show()
+            self.pet_label.show()
 
     def switch_state(self, state: PetState):
         if self.current_state == state:
@@ -146,12 +162,17 @@ class Deskpet(QWidget):
     
 
     def start_random_move(self):
+        '''
+        随机漫步施工中
+        '''
         pass
 
 
     def debug(self):
-        debug = 1
-        if debug:
+        '''
+        debug每秒钟输出一次的内容
+        '''
+        if self.isDebug:
             print(self.current_state.value)
             print(self.pet_label.movie)
             print(self.frameGeometry().topLeft())
