@@ -1,0 +1,171 @@
+import sys
+import os
+import random
+import time
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSystemTrayIcon, QMenu
+from PyQt6.QtGui import QMovie, QMouseEvent, QPixmap, QIcon, QAction
+from PyQt6.QtCore import Qt, QPoint, QTimer, QSize, QEvent
+
+from state import PetState
+
+
+
+class Deskpet(QWidget):
+
+    def __init__(self):
+        super().__init__()
+
+        self.resource_path = './resource/img/'
+
+        self.movies = {
+            state: QMovie(os.path.join(self.resource_path, f"{state.value}.gif"))
+            for state in PetState
+        }
+
+        self.movie_size = {}
+        self.load_gif_size()
+
+        self.current_state = None
+        self.pet_label = QLabel(self)
+        self.init_window()
+
+        self.tray_icon = QSystemTrayIcon()
+        self.init_tary_icon()
+        self.drag_position = QPoint()
+
+        
+
+        self.rand_move_timer = QTimer(self)
+
+        debug_timer = QTimer(self)
+        debug_timer.timeout.connect(self.debug)
+        debug_timer.start(1000)
+        
+    def load_gif_size(self):
+        for state in PetState:
+            movie = self.movies[state]
+            movie.jumpToFrame(0)
+            size = movie.currentPixmap().size()
+            self.movie_size[state] = size
+
+    def init_window(self):
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint |
+            Qt.WindowType.WindowStaysOnTopHint |
+            Qt.WindowType.SubWindow
+        )
+
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setAutoFillBackground(False)
+
+        self.switch_state(PetState.STANDBY)
+
+        gif_size = self.movies[PetState.STANDBY].currentPixmap().size()
+        self.resize(gif_size)
+        self.pet_label.resize(gif_size)
+
+        self.show()
+
+
+    def init_tary_icon(self):
+        icon_path = os.path.join(self.resource_path, 'standby.gif')
+        self.tray_icon.setIcon(QIcon(icon_path))
+
+        self.tray_icon.setToolTip("My LXB")
+
+        tray_menu = QMenu(self)
+
+        show_action = QAction("显示/隐藏", self)
+        quit_action = QAction("退出", self)
+
+        quit_action.triggered.connect(QApplication.instance().quit)
+        tray_menu.addAction(show_action)
+        tray_menu.addAction(quit_action)
+
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.show()
+    
+    def init_click_menu(self):
+        menu = QMenu(self)
+        show_action = QAction("显示/隐藏", self)
+        quit_action = QAction("退出", self)
+
+        quit_action.triggered.connect(QApplication.instance().quit)
+        menu.addAction(show_action)
+        menu.addAction(quit_action)
+
+    def toggle_visibility(self):
+        if self.isVisible():
+            self.hide()
+        else :
+            self.show()
+
+    def switch_state(self, state: PetState):
+        if self.current_state == state:
+            return
+        # 停止先前的动画防止报错
+        if self.current_state and self.current_state in self.movies:
+            pre_movie = self.movies[self.current_state]
+            pre_movie.stop()
+
+        self.current_state = state
+        cur_movie = self.movies[state]
+        new_size = self.movie_size[state]
+
+        if self.size() != new_size:
+            self.resize(new_size)
+            self.pet_label.resize(new_size)
+            
+        self.pet_label.setMovie(cur_movie)
+        self.movies[state].start()
+
+        print("shift to {cur_state.value}")
+
+
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.switch_state(PetState.DRAG)
+            self.drag_position = event.globalPosition().toPoint()-self.frameGeometry().topLeft()
+            event.accept()
+        
+        if event.button() == Qt.MouseButton.RightButton:
+            menu = QMenu(self)
+            
+
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        if event.buttons() == Qt.MouseButton.LeftButton and self.current_state == PetState.DRAG:
+            self.move(event.globalPosition().toPoint() - self.drag_position)
+            event.accept()
+    
+
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.switch_state(PetState.STANDBY)
+            event.accept()
+    
+
+    def start_random_move(self):
+        pass
+
+
+    def debug(self):
+        debug = 1
+        if debug:
+            print(self.current_state.value)
+            print(self.pet_label.movie)
+            print(self.frameGeometry().topLeft())
+        
+    
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    pet = Deskpet()
+    sys.exit(app.exec())
+
+    
+
+
+        
+        
+
