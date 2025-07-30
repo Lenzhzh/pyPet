@@ -3,7 +3,7 @@ import os
 import random
 import time
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSystemTrayIcon, QMenu
-from PyQt6.QtGui import QMovie, QMouseEvent, QPixmap, QIcon, QAction
+from PyQt6.QtGui import QMovie, QMouseEvent, QPixmap, QIcon, QAction, QVector2D
 from PyQt6.QtCore import Qt, QPoint, QTimer, QSize, QEvent
 
 from state import PetState
@@ -33,9 +33,12 @@ class Deskpet(QWidget):
         self.init_tary_icon()
         self.drag_position = QPoint()
 
-        
-
+        self.rand_move_interval = 10000
         self.rand_move_timer = QTimer(self)
+        self.rand_move_timer.timeout.connect(self.start_random_move)
+        self.rand_move_timer.start(self.rand_move_interval)
+        self.move_timer = QTimer(self)
+        self.move_timer.timeout.connect(self.perform_move)
 
         debug_timer = QTimer(self)
         debug_timer.timeout.connect(self.debug)
@@ -137,18 +140,20 @@ class Deskpet(QWidget):
 
         print("shift to {cur_state.value}")
 
+    def timer_reset(self, timer: QTimer):
+        timer.stop()
+        timer.start()
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
             self.switch_state(PetState.DRAG)
             self.drag_position = event.globalPosition().toPoint()-self.frameGeometry().topLeft()
+            self.rand_move_timer.stop()
             event.accept()
         
         if event.button() == Qt.MouseButton.RightButton:
             menu = QMenu(self)
             
-
-
     def mouseMoveEvent(self, event: QMouseEvent):
         if event.buttons() == Qt.MouseButton.LeftButton and self.current_state == PetState.DRAG:
             self.move(event.globalPosition().toPoint() - self.drag_position)
@@ -158,14 +163,33 @@ class Deskpet(QWidget):
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
             self.switch_state(PetState.STANDBY)
+            self.rand_move_timer.start()
             event.accept()
-    
 
     def start_random_move(self):
-        '''
-        随机漫步施工中
-        '''
-        pass
+        if self.current_state == PetState.STANDBY:
+            self.switch_state(PetState.MOVE)
+            self.rand_move_timer.stop()
+            screen_geo = QApplication.primaryScreen().geometry()
+            target_x = self.x() + random.randint(-150, 150)
+            target_y = self.y() + random.randint(-150, 150)
+            target_x = max(0, min(target_x, screen_geo.width() - self.width()))
+            target_y = max(0, min(target_y, screen_geo.height() - self.height()))
+            self.target_position = QPoint(target_x, target_y)
+            self.move_timer.start(20)
+
+    def perform_move(self):
+        current_pos = self.pos()
+        direction = self.target_position - current_pos
+        if direction.manhattanLength() < 5:
+            self.move(self.target_position)
+            self.move_timer.stop()
+            self.switch_state(PetState.STANDBY)
+            self.rand_move_timer.start(self.rand_move_interval)
+            return
+        step = QVector2D(direction).normalized() * 5
+        self.move(current_pos + QPoint(int(step.x()), int(step.y())))
+
 
 
     def debug(self):
