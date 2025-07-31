@@ -2,13 +2,13 @@
 
 ## What Is LXB?
 
-LXB is ~~the initials of **"Legislation Xmas Boy"** (圣诞律法小子)~~ my friend and my classmate. So you can regard this program as a trick ~~directed towards LXB, and he has even agreed to it.~~
+LXB is ~~the initials of **"Legislation Xmas Boy"** (圣诞律法小子)~~ my friend and my classmate. So you can regard this program as a trick ~~directed towards LXB, and he has even agreed to it~~.
 
 If you are interested in him, you can click here to visit [LXB's blog](chose-b-log.netlify.app).
 
 And **my *evil* idea** behind this program is that ***you can think of it as having LXB as a pet on your desktop if you open my project, ~~and waiting for your flirtation~~***.
 
-Back to the topic, this is a desktop pet program called **pyPet**, ~~or you can call it "My LXB".~~
+Back to the topic, this is a desktop pet program called **pyPet**~~, or you can call it "My LXB"~~.
 
 It's programmed using the new framework `PyQt6`, so there may be some differences from Qt5.
 
@@ -53,7 +53,7 @@ class PetState(enum.Enum):
     # add a run state
     RUN = 'run'
 ```
-Then, add a 'run.gif' to `./resource/img/`, and a new state will be created. The new state will be loaded automatically; you don't need to do anything else for it to be recognized by the program.
+Then, add a `run.gif` to `./resource/img/`, and a new state will be created. The new state will be loaded automatically; you don't need to do anything else for it to be recognized by the program.
 
 Of course, we can't use it directly yet. We need to add trigger logic for the state to take effect.
 
