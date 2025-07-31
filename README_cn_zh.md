@@ -1,3 +1,8 @@
+[中文README](README_cn_zh.md)
+[ENGLISH README](README.md)
+
+---
+
 # 我的LXB
 
 ## LXB是什么东西?
