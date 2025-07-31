@@ -16,13 +16,13 @@ As far as I know, both frameworks can be used to easily design a desktop pet. An
 
 ## How To Use My LXB?
 
-Well, it's quite simple. Just run "main.py" to start the program. If you are not satisfied with the current images, you can replace them with your own files (of course, using the same names).
+Well, it's quite simple. Just run `main.py` to start the program. If you are not satisfied with the current images, you can replace them with your own files (using the same filenames).
 
 ## How Did I Generate The F**king Assets?
 
 Of course, I'm sure that no one will be happy when they see my test (and even perfunctory) image presets for my LXB. But there might be some potential contributors who are interested in my drawing process.
 
-To be honest, I just opened a 256x256 canvas in SAI2 and drew some lines on it (without even using my tablet). I didn't use any animation tools and just directly converted the .png to a .gif. I know, it's pretty bad!
+To be honest, I just opened a 256x256 canvas in SAI2 and drew some lines on it (without even using my tablet). I didn't use any animation tools and just directly converted the `.png` to a `.gif`. I know, it's pretty bad!
 
 ## Where Will LXB Go?
 
@@ -34,7 +34,7 @@ The charm of coding is that you can do whatever you want, as long as you have en
 
 As someone said: `Talk Is Cheap, Show Me The Code!`. Everyone is welcome to join us!
 
-I hope one day I can proudly give it to LXB and say, "Haha, it's you!" (although my mom may be greeting by him).
+I hope one day I can proudly give it to LXB and say, "Haha, it's you!" (although my mom might be greeted by him).
 
 ### Add a New State for LXB
 
