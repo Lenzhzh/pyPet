@@ -1,0 +1,28 @@
+[
+    {
+        "id": "enable debug",
+        "label": "启用调试",
+        "type": "checkBox",
+        "default": false
+    },
+    {
+        "id": "enable random move",
+        "label": "启用随机移动",
+        "type": "checkBox",
+        "default": true
+    },
+    {
+        "id": "random move interval",
+        "label": "移动间隔（ms）",
+        "type": "lineEdit",
+        "default": "10000",
+        "validation": "int"
+    },
+    {
+        "id": "resource_path",
+        "label": "资源位置",
+        "type": "lineEdit",
+        "default": "./resource/",
+        "validation": "string"
+    }
+]
