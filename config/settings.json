@@ -1,7 +1,0 @@
-{
-    "enable debug": true,
-    "enable random move": true,
-    "random move interval": "10000",
-    "resource_path": "./resource/",
-    "click audio": "B.wav"
-}
