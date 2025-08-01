@@ -92,14 +92,14 @@ Because comment is not allowed in .json file, I must explain each line in this f
 `type` decide how you can change the setting. there are 3 type can be use now, they are : `checkBox`, `editLine` and `comboBox`.
 
 1. `checkBox` allows you to click a check box in setting ui to change a setting option between `True` and `False`.
-2. `editLine` allows you to input your value in an edit line. The "validation": "int" option works as a reminder for you.
+2. `lineEdit` allows you to input your value in an edit line. The "validation": "int" option works as a reminder for you.
 3. `comboBox` have different structure like here, the "options" is a `dict` providing different choose. **And if you use `"NONE"` as value, it will work as disabled as I want**, of course, it's just my own habbit, ***you can edit it or give it a new meanning just as you want***.
    ```json
     {
         "id": "display music",
         "label": "使用的音乐",
         "type": "comboBox",
-        "default": "/music/鬼叫.mp3",
+        "default": "music/鬼叫.mp3",
         "options": {
             "鬼叫" : "music/鬼叫.mp3",
             "不使用": "NONE"

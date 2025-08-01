@@ -29,10 +29,11 @@
         "id": "display music",
         "label": "使用的音乐",
         "type": "comboBox",
-        "default": "/music/鬼叫.mp3",
+        "default": "鬼叫.mp3",
         "options": {
-            "鬼叫" : "music/鬼叫.mp3",
-            "不使用": "NONE"
+            "鬼叫" : "鬼叫.mp3",
+            "不使用": "NONE",
+            "随机" : "RANDOM"
         }
     }
 ]
