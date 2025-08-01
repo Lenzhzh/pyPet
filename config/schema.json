@@ -15,7 +15,7 @@
         "id": "random move interval",
         "label": "移动间隔（ms）",
         "type": "lineEdit",
-        "default": "10000",
+        "default": 10000,
         "validation": "int"
     },
     {
@@ -24,5 +24,15 @@
         "type": "lineEdit",
         "default": "./resource/",
         "validation": "string"
+    },
+    {
+        "id": "display music",
+        "label": "使用的音乐",
+        "type": "comboBox",
+        "default": "/music/鬼叫.mp3",
+        "options": {
+            "鬼叫" : "music/鬼叫.mp3",
+            "不使用": "NONE"
+        }
     }
 ]

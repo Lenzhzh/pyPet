@@ -24,12 +24,9 @@ class SettingManager:
     
     def _load_settings(self):
         settings = self._load_json(self.setting_path)
-
         defaults = { item['id'] : item['default'] for item in self.schema }
-
         if settings:
             defaults.update(settings)
-        
         return defaults
 
     def get(self, key, default=None):
