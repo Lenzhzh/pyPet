@@ -1,3 +1,4 @@
+import sys
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, 
                              QComboBox, QCheckBox, QPushButton, QHBoxLayout,
                              QScrollArea)
@@ -116,4 +117,4 @@ class SettingUI(QWidget):
                 self.manager.set(item_id, widget.currentData())
         
         self.manager.save()
-        self.close()
+        sys.exit()
