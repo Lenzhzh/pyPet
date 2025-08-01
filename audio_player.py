@@ -12,8 +12,6 @@ class AudioPlayer(QObject):
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
 
-        
-
         if audio_path == "RANDOM":
             self.audio_files = self._find_audio_files()
         else :
