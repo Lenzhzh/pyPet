@@ -1,4 +1,4 @@
 __pycache__/
 test.*
 ffmpeg.exe
-./config/setting.json
+settings.json

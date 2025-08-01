@@ -40,7 +40,7 @@ class SettingUI(QWidget):
         button_layout = QHBoxLayout()
         button_layout.addStretch()
 
-        save_button = QPushButton('保存', self)
+        save_button = QPushButton('保存并退出', self)
         cancel_button = QPushButton('关闭', self)
 
         save_button.clicked.connect(self.save_settings)
@@ -116,4 +116,4 @@ class SettingUI(QWidget):
                 self.manager.set(item_id, widget.currentData())
         
         self.manager.save()
-        
+        self.close()
