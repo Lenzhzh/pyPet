@@ -13,15 +13,15 @@ class AudioPlayer(QObject):
         super().__init__(parent)
 
         if audio_file == "RANDOM":
-            self.audio_files = self._find_audio_files()
+            self.audio_files = self._find_audio_files(audio_path)
         else :
             self.audio_files = [audio_file]
         
         self._fix_file_path(audio_path)
 
-    def _find_audio_files(self):
+    def _find_audio_files(self, audio_path):
         try:
-            return [f for f in os.listdir(self.audio_folder) if f.endswith(('.mp3', '.wav', '.ogg'))]
+            return [f for f in os.listdir(audio_path) if f.endswith(('.mp3', '.wav', '.ogg'))]
         except FileNotFoundError:
             return []
     
