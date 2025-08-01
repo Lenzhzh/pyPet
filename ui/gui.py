@@ -67,10 +67,9 @@ class SettingUI(QWidget):
             widget = QLineEdit(self)
             
         elif item_type == 'comboBox':
-            widget = QCheckBox(self)
+            widget = QComboBox(self)
             for display_name, internal_value in item['options'].items():
                 widget.addItem(display_name, internal_value)
-        
         else :
             print(f"Warn: {item_id} item widget didn't generate correctly, please check your item_type '{item_type}' !")
             return
