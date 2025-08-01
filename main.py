@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSystemTrayIcon, QMen
 from PyQt6.QtGui import QMovie, QMouseEvent, QPixmap, QIcon, QAction, QVector2D
 from PyQt6.QtCore import Qt, QPoint, QTimer, QSize, QEvent
 
-from audio_player import AudioPlayer
+from audio_player import AudioPlayerWithPygame, AudioPlayerWithPyqt6
 from state import PetState
 from setting_manager import SettingManager
 from ui import SettingUI
@@ -54,7 +54,7 @@ class Deskpet(QWidget):
             self._load_debug()
         if self.setting_manager.get('enable random move'):
             self._load_random_move()
-        if self.setting_manager.get('click audio') != "NONE":
+        if self.setting_manager.get('click audio player') and self.setting_manager.get('click audio player') != "NONE":
             self._load_click_audio()
         
     def load_gif_size(self):
@@ -147,10 +147,17 @@ class Deskpet(QWidget):
 
     def _load_click_audio(self):
         self.click_audio = True
-        self.audio_player = AudioPlayer(
-            audio_path = os.path.join(self.resource_path, "audio/"),
-            audio_file = self.setting_manager.get("click audio")
-        )
+        player = self.setting_manager.get('click audio player')
+        if player == "pyqt6":
+            self.audio_player = AudioPlayerWithPyqt6(
+                audio_path = os.path.join(self.resource_path, "audio/"),
+                audio_file = self.setting_manager.get("click audio")
+            )
+        if player == "pygame":
+            self.audio_player = AudioPlayerWithPygame(
+                audio_path = os.path.join(self.resource_path, "audio/"),
+                audio_file = self.setting_manager.get("click audio")
+            )
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -176,9 +183,6 @@ class Deskpet(QWidget):
             
             if self.rand_move:
                 self.rand_move_timer.start()
-
-            if self.click_audio:
-                self.audio_player.stop()
 
             event.accept()
 

@@ -26,6 +26,17 @@
         "validation": "string"
     },
     {
+        "id": "click audio player",
+        "label": "触碰音效播放器",
+        "type": "comboBox",
+        "default": "pygame",
+        "options": {
+            "使用Pygame驱动" : "pygame",
+            "使用PyQt6驱动" : "pyqt6",
+            "不使用" : "NONE"
+        }
+    },
+    {
         "id": "click audio",
         "label": "触碰音效",
         "type": "comboBox",
@@ -35,7 +46,6 @@
             "冰wav" : "B.wav",
             "冰mp3" : "冰.mp3",
             "炫狗": "炫狗.mp3",
-            "不使用": "NONE",
             "随机" : "RANDOM"
         }
     }
