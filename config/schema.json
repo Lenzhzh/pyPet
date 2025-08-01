@@ -39,14 +39,21 @@
     {
         "id": "click audio",
         "label": "触碰音效",
-        "type": "comboBox",
-        "default": "RANDOM",
+        "type": "listCheckBox",
         "options": {
             "鬼叫" : "电棍鬼叫.mp3",
             "冰wav" : "B.wav",
             "冰mp3" : "冰.mp3",
-            "炫狗": "炫狗.mp3",
-            "随机" : "RANDOM"
-        }
+            "炫狗": "炫狗.mp3"
+        },
+        "default": ["电棍鬼叫.mp3", "B.wav"]
+    },
+    {
+        "id" : "click audio volume",
+        "label" : "触碰音量",
+        "type" : "slider",
+        "range" : [20, 100],
+        "default" : 60,
+        "validation": "int"
     }
 ]

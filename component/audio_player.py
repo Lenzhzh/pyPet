@@ -9,14 +9,11 @@ class AudioPlayer(QObject):
     '''
     抽象父类，声音播放器。
     '''
-    def __init__(self, audio_path, audio_file, parent = None):
+    def __init__(self, audio_path, audio_files, volume, parent = None):
         super().__init__(parent)
 
-        if audio_file == "RANDOM":
-            self.audio_files = self._find_audio_files(audio_path)
-        else :
-            self.audio_files = [audio_file]
-        
+        self.audio_files = audio_files
+        self.volume = volume
         self._fix_file_path(audio_path)
 
     def _find_audio_files(self, audio_path):
@@ -51,13 +48,14 @@ class AudioPlayerWithPyqt6(AudioPlayer):
     '''
     不知道为什么我用不了。其实这个才是本来的选项。
     '''
-    def __init__(self, audio_path, audio_file, parent=None):
-        super().__init__(audio_path, audio_file, parent)
+    def __init__(self, audio_path, audio_files, volume, parent=None):
+        super().__init__(audio_path, audio_files, volume, parent)
         self.init_QtMultimedia()
 
     def init_QtMultimedia(self):
         self.player = QMediaPlayer(self)
         self.audio_output = QAudioOutput()
+        self.audio_output.setVolume(self.volume)
         self.player.setAudioOutput(self.audio_output)
 
     def play_random_sound(self):
@@ -75,8 +73,8 @@ class AudioPlayerWithPygame(AudioPlayer):
     '''
     使用pygame进行发声。
     '''
-    def __init__(self, audio_path, audio_file, parent=None):
-        super().__init__(audio_path, audio_file, parent)
+    def __init__(self, audio_path, audio_files, volume, parent=None):
+        super().__init__(audio_path, audio_files, volume, parent)
         pygame.mixer.init()
 
     def stop(self):
@@ -89,6 +87,7 @@ class AudioPlayerWithPygame(AudioPlayer):
         chosen_file = random.choice(self.audio_files)
 
         pygame.mixer.music.load(chosen_file)
+        pygame.mixer.music.set_volume(self.volume/100)
         pygame.mixer.music.play()
     
             

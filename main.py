@@ -6,9 +6,8 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSystemTrayIcon, QMen
 from PyQt6.QtGui import QMovie, QMouseEvent, QPixmap, QIcon, QAction, QVector2D
 from PyQt6.QtCore import Qt, QPoint, QTimer, QSize, QEvent
 
-from audio_player import AudioPlayerWithPygame, AudioPlayerWithPyqt6
 from state import PetState
-from setting_manager import SettingManager
+from component.setting_manager import SettingManager
 from ui import SettingUI
 
 
@@ -103,7 +102,7 @@ class Deskpet(QWidget):
         quit_action = QAction("退出", self)
         set_action = QAction("设置", self)
 
-        quit_action.triggered.connect(sys.exit)
+        quit_action.triggered.connect(self.save_and_quit)
         show_action.triggered.connect(self.toggle_visibility)
         set_action.triggered.connect(self.call_setting_UI)
 
@@ -113,6 +112,10 @@ class Deskpet(QWidget):
 
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
+
+    def save_and_quit(self):
+        self.setting_manager.save()
+        sys.exit()
 
     def toggle_visibility(self):
         if self.isVisible():
@@ -147,28 +150,36 @@ class Deskpet(QWidget):
 
     def _load_click_audio(self):
         self.click_audio = True
+
         player = self.setting_manager.get('click audio player')
         if player == "pyqt6":
+            from component.audio_player import AudioPlayerWithPyqt6
             self.audio_player = AudioPlayerWithPyqt6(
                 audio_path = os.path.join(self.resource_path, "audio/"),
-                audio_file = self.setting_manager.get("click audio")
+                audio_files = self.setting_manager.get("click audio"),
+                volume = self.setting_manager.get("click audio volume")
             )
         if player == "pygame":
+            from component.audio_player import AudioPlayerWithPygame
             self.audio_player = AudioPlayerWithPygame(
                 audio_path = os.path.join(self.resource_path, "audio/"),
-                audio_file = self.setting_manager.get("click audio")
+                audio_files = self.setting_manager.get("click audio"),
+                volume = self.setting_manager.get("click audio volume")
             )
+    
+    def _check_short_click(self):
+        now_time = time.monotonic()
+        return ((now_time - self._last_left_click)*1000 < 120)        
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
             self.switch_state(PetState.DRAG)
             self.drag_position = event.globalPosition().toPoint()-self.frameGeometry().topLeft()
-            
+
             if self.rand_move:
                 self.rand_move_timer.stop()
 
-            if self.click_audio:
-                self.audio_player.start()
+            self._last_left_click = time.monotonic()
 
             event.accept()          
             
@@ -180,9 +191,17 @@ class Deskpet(QWidget):
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
             self.switch_state(PetState.STANDBY)
-            
             if self.rand_move:
                 self.rand_move_timer.start()
+
+        # 点按状态
+        if self._check_short_click():
+            print(1)
+            if self.click_audio:
+                self.audio_player.start()
+        # 长按状态 
+        else :
+            pass
 
             event.accept()
 

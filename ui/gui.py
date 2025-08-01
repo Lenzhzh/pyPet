@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, 
                              QComboBox, QCheckBox, QPushButton, QHBoxLayout,
-                             QScrollArea)
+                             QScrollArea, QSlider)
 from PyQt6.QtCore import Qt
 
 
@@ -61,22 +61,48 @@ class SettingUI(QWidget):
         label = item['label']
         item_type = item['type']
         lbl = QLabel(label)
+        layout.addWidget(lbl)
+
         if item_type == 'checkBox':
             widget = QCheckBox(self)
-        
+            layout.addWidget(widget)
+
         elif item_type == 'lineEdit':
             widget = QLineEdit(self)
+            layout.addWidget(widget)
             
         elif item_type == 'comboBox':
             widget = QComboBox(self)
             for display_name, internal_value in item['options'].items():
                 widget.addItem(display_name, internal_value)
+            layout.addWidget(widget)
+
+        elif item_type == 'slider':
+            widget = QSlider(Qt.Orientation.Horizontal)
+            widget.setRange(item['range'][0], item['range'][1])
+            widget.valueChanged.connect(lambda value: (
+                lbl.setText(f"{label} {str(value)}"),
+            ))
+            layout.addWidget(widget)
+            
+        elif item_type == 'listCheckBox':
+            list_layout = QVBoxLayout()
+            qw = QWidget()
+            qw.setLayout(list_layout)
+            widget = []
+            for display_name, internal_value in item['options'].items():
+                checkbox = QCheckBox(display_name)
+                widget.append({'widget': checkbox, 'value': internal_value})
+
+            for cb_info in widget:
+                list_layout.addWidget(cb_info['widget'])
+
+            layout.addWidget(qw)
+
         else :
             print(f"Warn: {item_id} item widget didn't generate correctly, please check your item_type '{item_type}' !")
             return
 
-        layout.addWidget(lbl)
-        layout.addWidget(widget)
         self.widgets[item_id] = widget
 
         layout.addSpacing(10)
@@ -99,10 +125,19 @@ class SettingUI(QWidget):
                     widget.setCurrentIndex(index)
                 else :
                     widget.setCurrentIndex(0)
-                    print("INFO: Setting {item_id} have no current value, default setting are loaded !")
-                
+                    print(f"INFO: Setting {item_id} have no current value, default setting are loaded !")
+            
+            elif isinstance(widget, QSlider):
+                widget.setValue(int(value))
+            
+            elif isinstance(widget, list):
+                if widget and isinstance(widget[0], dict):
+                    saved_values = value 
+                    for cb_info in widget:
+                        cb_info['widget'].setChecked(cb_info['value'] in saved_values)
+
             else :
-                print("Warn: Setting {item_id} haven't been loaded, please check it's item type !")
+                print(f"Warn: Setting {item_id} haven't been loaded, please check it's item type !")
 
     def save_settings(self):
         '''
@@ -113,8 +148,17 @@ class SettingUI(QWidget):
                 self.manager.set(item_id, widget.isChecked())
             elif isinstance(widget, QLineEdit):
                 self.manager.set(item_id, widget.text())
-            else :
+            elif isinstance(widget, QComboBox) :
                 self.manager.set(item_id, widget.currentData())
-        
+            elif isinstance(widget, QSlider):
+                self.manager.set(item_id, widget.value())
+            elif isinstance(widget, list):
+                if widget and isinstance(widget[0], dict):
+                    selected_values = []
+                    for cb_info in widget:
+                        if cb_info['widget'].isChecked():
+                            selected_values.append(cb_info['value'])
+                    self.manager.set(item_id, selected_values)
+
         self.manager.save()
         sys.exit()

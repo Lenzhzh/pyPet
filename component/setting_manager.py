@@ -23,7 +23,14 @@ class SettingManager:
             return None
     
     def _load_settings(self):
-        settings = self._load_json(self.setting_path)
+        try: 
+            settings = self._load_json(self.setting_path)
+        except:
+            # 若设置出错则强制清除
+            settings = None
+            self.settings = {}
+            self.save()
+            
         defaults = { item['id'] : item['default'] for item in self.schema }
         if settings:
             defaults.update(settings)
