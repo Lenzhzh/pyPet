@@ -40,7 +40,7 @@
         "id": "click audio",
         "label": "触碰音效",
         "type": "comboBox",
-        "default": "电棍鬼叫.mp3",
+        "default": "RANDOM",
         "options": {
             "鬼叫" : "电棍鬼叫.mp3",
             "冰wav" : "B.wav",
