@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSystemTrayIcon, QMen
 from PyQt6.QtGui import QMovie, QMouseEvent, QPixmap, QIcon, QAction, QVector2D
 from PyQt6.QtCore import Qt, QPoint, QTimer, QSize, QEvent
 
+from audio_player import AudioPlayer
 from state import PetState
 from setting_manager import SettingManager
 from ui import SettingUI
@@ -42,8 +43,19 @@ class Deskpet(QWidget):
         self.gui.hide()
 
         self.click_menu = None
-
+        
+        # 设置可选项
+        self.rand_move = False
+        self.click_audio = False
         self.init_optional_settings()
+
+    def init_optional_settings(self):
+        if self.setting_manager.get('enable debug'):
+            self._load_debug()
+        if self.setting_manager.get('enable random move'):
+            self._load_random_move()
+        if self.setting_manager.get('click audio') != "NONE":
+            self._load_click_audio()
         
     def load_gif_size(self):
         '''
@@ -102,8 +114,6 @@ class Deskpet(QWidget):
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
 
-        print(114514)
-
     def toggle_visibility(self):
         if self.isVisible():
             self.hide()
@@ -131,17 +141,28 @@ class Deskpet(QWidget):
         self.pet_label.setMovie(cur_movie)
         self.movies[state].start()
 
-        print("shift to {cur_state.value}")
-
     def timer_reset(self, timer: QTimer):
         timer.stop()
         timer.start()
+
+    def _load_click_audio(self):
+        self.click_audio = True
+        self.audio_player = AudioPlayer(
+            audio_path = os.path.join(self.resource_path, "audio/"),
+            audio_file = self.setting_manager.get("click audio")
+        )
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
             self.switch_state(PetState.DRAG)
             self.drag_position = event.globalPosition().toPoint()-self.frameGeometry().topLeft()
-            self.rand_move_timer.stop()
+            
+            if self.rand_move:
+                self.rand_move_timer.stop()
+
+            if self.click_audio:
+                self.audio_player.start()
+
             event.accept()          
             
     def mouseMoveEvent(self, event: QMouseEvent):
@@ -152,17 +173,17 @@ class Deskpet(QWidget):
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
             self.switch_state(PetState.STANDBY)
-            self.rand_move_timer.start()
+            
+            if self.rand_move:
+                self.rand_move_timer.start()
+
+            if self.click_audio:
+                self.audio_player.stop()
+
             event.accept()
 
-
-    def init_optional_settings(self):
-        if self.setting_manager.get('enable debug'):
-            self._load_debug()
-        if self.setting_manager.get('enable random move'):
-            self._load_random_move()
-
     def _load_random_move(self):
+        self.rand_move = True
         self.rand_move_interval = int(self.setting_manager.get("random move interval"))
         self.rand_move_timer = QTimer(self)
         self.rand_move_timer.timeout.connect(self.start_random_move)
@@ -216,6 +237,7 @@ class Deskpet(QWidget):
         print(self.pet_label.movie)
         print(self.frameGeometry().topLeft())
         print(self.resource_path)
+        print(self.audio_player.audio_files)
         
     
 

@@ -3,5 +3,5 @@
     "enable random move": true,
     "random move interval": "10000",
     "resource_path": "./resource/",
-    "display music": "鬼叫.mp3"
+    "click audio": "冰.wav"
 }
