@@ -3,7 +3,13 @@
         "id": "enable debug",
         "label": "启用调试",
         "type": "checkBox",
-        "default": false
+        "default": true
+    },
+    {
+        "id": "visible console",
+        "label" : "可视控制台",
+        "type": "checkBox",
+        "default": true
     },
     {
         "id": "enable random move",

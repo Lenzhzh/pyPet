@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit,
                              QComboBox, QCheckBox, QPushButton, QHBoxLayout,
                              QScrollArea, QSlider)
 from PyQt6.QtCore import Qt
+from ui.console import logger
 
 
 class SettingUI(QWidget):
@@ -100,11 +101,11 @@ class SettingUI(QWidget):
             layout.addWidget(qw)
 
         else :
-            print(f"Warn: {item_id} item widget didn't generate correctly, please check your item_type '{item_type}' !")
+            logger.warn(f"设置ui未找到 type 为 {item_type} 的设置, 未能加载该选项 !")
             return
 
+        logger.info(f"设置ui已加载 {item_id} 选项 !")
         self.widgets[item_id] = widget
-
         layout.addSpacing(10)
             
     def load_settings(self):
@@ -125,7 +126,6 @@ class SettingUI(QWidget):
                     widget.setCurrentIndex(index)
                 else :
                     widget.setCurrentIndex(0)
-                    print(f"INFO: Setting {item_id} have no current value, default setting are loaded !")
             
             elif isinstance(widget, QSlider):
                 widget.setValue(int(value))
@@ -137,7 +137,7 @@ class SettingUI(QWidget):
                         cb_info['widget'].setChecked(cb_info['value'] in saved_values)
 
             else :
-                print(f"Warn: Setting {item_id} haven't been loaded, please check it's item type !")
+                logger.warn(f"设置ui未能成功从用户设置中加载 id 为 {item_id} 的选项 !")
 
     def save_settings(self):
         '''

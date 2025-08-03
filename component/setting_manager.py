@@ -1,5 +1,6 @@
 import json
 import os
+from ui.console import logger
 
 
 class SettingManager:
@@ -9,11 +10,11 @@ class SettingManager:
 
         self.schema = self._load_json(self.schema_path)
         if not(self.schema):
-            print("Error: Schema file not found or is empty !")
+            logger.error("未找到设置项, 设置ui无法打开 !")
             return
 
         self.settings = self._load_settings()
-        print(self.settings)
+        logger.info(f"已成功加载设置 : {self.settings} !")
 
     def _load_json(self, file_path):
         try:
@@ -46,10 +47,10 @@ class SettingManager:
         try:
             with open(self.setting_path, 'w', encoding='utf-8') as f:
                 json.dump(self.settings, f, indent=4, ensure_ascii=False)
-            print("INFO: Settings saved successfully")
+            logger.info("设置成功保存!")
             return True
         except :
-            print(f"Error: Fail in loading settings: {Exception}")
+            logger.error(f"保存设置失败, 原因是: {Exception} !")
             return False
     
     def get_schema(self):
